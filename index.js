@@ -1,4 +1,5 @@
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const ALPHABET_LENGTH = ALPHABET.length;
 const X_INDEX = ALPHABET.indexOf("X");
 
 const last = (arr) => arr[arr.length - 1];
@@ -6,6 +7,20 @@ const last = (arr) => arr[arr.length - 1];
 const stringToLetters = (string) => Array.from(string);
 
 const lettersToString = (letters) => letters.join("");
+
+const decodeLetterIndex = (shift, unshiftedIndex) => {
+  const shiftedIndex = unshiftedIndex + shift;
+
+  if (shiftedIndex >= ALPHABET_LENGTH) {
+    return ALPHABET[shiftedIndex - ALPHABET_LENGTH];
+  }
+
+  if (shiftedIndex < 0) {
+    return ALPHABET[shiftedIndex + ALPHABET_LENGTH];
+  }
+
+  return ALPHABET[shiftedIndex];
+};
 
 const counterIntelligence = (encoded) => {
   const encodedUpper = encoded.toUpperCase();
@@ -15,14 +30,7 @@ const counterIntelligence = (encoded) => {
   const shift = X_INDEX - lastLetterIndex;
   const decodedLetters = letters.map((letter) => {
     const letterIndex = ALPHABET.indexOf(letter);
-    if (letterIndex < 0) return letter;
-
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Remainder
-    const n = letterIndex + shift;
-    const d = ALPHABET.length;
-    const newIndex = ((n % d) + d) % d;
-
-    return ALPHABET[newIndex];
+    return letterIndex >= 0 ? decodeLetterIndex(shift, letterIndex) : letter;
   });
   return lettersToString(decodedLetters);
 };
